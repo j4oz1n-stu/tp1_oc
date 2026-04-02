@@ -26,19 +26,24 @@ void binario_imediato(int valor, char binario[]){
     }
 }
 
-int main(){
-    char nome_arquivo [60];
-    printf("insira o nome do arquivo que sera aberto (lembre-se de colocar a extensão do arquivo)\n");
-    printf("ex: meu_assembly.asm\n");
-    scanf("%s", nome_arquivo);
-    FILE * arquivo;
-    char linha [70];
-    arquivo = fopen(nome_arquivo, "r");
-    if (arquivo == NULL) {
-        printf("Erro ao abrir arquivo.\n");
+int main(int argc, char *argv[]){
+    if (argc < 3) {
         return 1;
     }
-    while(fgets(linha, 70, arquivo)!=NULL){
+    FILE *entrada = fopen(argv[1], "r");
+    FILE *saida = fopen(argv[2], "w");
+
+    if (entrada == NULL || saida == NULL) {
+        perror("Erro ao abrir os arquivos");
+        return 1;
+    }
+    char linha [70];
+    int escolha_de_saida;
+    printf("Escolha a forma que voce gostaria de receber a saida,\n");
+    printf("Digite 1 para saida de arquivo ou 2 pra saida no terminal!\n");
+    scanf("%d",&escolha_de_saida);
+    
+    while(fgets(linha, 70, entrada)!=NULL){
         for(int i = 1; linha[i]!='\0'; i++){
             if(linha[i]==',' || linha[i]=='x') linha[i]=' ';
         }
@@ -57,10 +62,39 @@ int main(){
             binario(reg2, reg2_bin);
             // RISC-V SUB: funct7 | rs2 | rs1 | funct3 | rd | opcode
             printf("0100000%s%s000%s0110011", reg2_bin, reg1_bin, rd_bin);
+            if(escolha_de_saida==1){
+                //saida de arquivo
+                fprintf(saida, "0100000%s%s000%s0110011", reg2_bin, reg1_bin, rd_bin);
+            }
+            else{
+                printf("0100000%s%s000%s0110011", reg2_bin, reg1_bin, rd_bin);
+            }
 
         }
+        else if(strcmp(comando, "ori")==0){
+            
+        }
+        else if(strcmp(comando, "beq")==0){
+            
+        }
+        else if(strcmp(comando, "lb")==0){
+            
+        }
+        else if(strcmp(comando, "sb")==0){
+            
+        }
+        else if(strcmp(comando, "and")==0){
+            
+        }
+        else if(strcmp(comando, "srl")==0){
+            
+        }
+        
+
     }
-    fclose(arquivo);
+    fclose(entrada);
+    fclose(saida);
+    return 0;
 
     //abrir o arquivo e fazer um while que le linha por linha,
     // apos isso fzer um if que analisa duas strings, como por exemplo: "sub"=="sub", porem so ate o primeiro espaço da string
