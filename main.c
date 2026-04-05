@@ -33,28 +33,28 @@ int main(int argc, char *argv[]){
     
     while(fgets(linha, 70, entrada)!=NULL){
         for(int i = 1; linha[i]!='\0'; i++){
-            if(linha[i]==',' || linha[i]=='x') linha[i]=' ';
+            if(linha[i]==',' || linha[i]=='x' || linha[i]=='(' || linha[i]==')') linha[i]=' ';
         }
         char comando [3];
         sscanf(linha, "%s", comando);
         if (strcmp(comando, "sub")==0){
             unsigned int rd;
             char rd_bin [6];
-            unsigned int reg1;
-            char reg1_bin[6];
-            unsigned int reg2;
-            char reg2_bin[6];
-            sscanf(linha, "%*s  %d  %d  %d", &rd, &reg1, &reg2);
+            unsigned int rs1;
+            char rs1_bin[6];
+            unsigned int rs2;
+            char rs2_bin[6];
+            sscanf(linha, "%*s  %d  %d  %d", &rd, &rs1, &rs2);
             binario(rd, rd_bin);
-            binario(reg1, reg1_bin);
-            binario(reg2, reg2_bin);
+            binario(rs1, rs1_bin);
+            binario(rs2, rs2_bin);
             // RISC-V SUB: funct7 | rs2 | rs1 | funct3 | rd | opcode
             if(escolha_de_saida==1){
                 //saida de arquivo
-                fprintf(saida, "0100000%s%s000%s0110011\n", reg2_bin, reg1_bin, rd_bin);
+                fprintf(saida, "0100000%s%s000%s0110011\n", rs2_bin, rs1_bin, rd_bin);
             }
             else{
-                printf("0100000%s%s000%s0110011\n", reg2_bin, reg1_bin, rd_bin);
+                printf("0100000%s%s000%s0110011\n", rs2_bin, rs1_bin, rd_bin);
             }
 
         }
@@ -66,6 +66,7 @@ int main(int argc, char *argv[]){
             binario(rd, rd_bin);
             binario(rs1, rs1_bin);
             binario_imediato(imm, imm_bin);
+            // RISC-V ORI: imm[11:0] | rs1 | funct3 | rd | opcode
             if(escolha_de_saida==1){
                 //saida de arquivo
                 fprintf(saida, "%s%s110%s0010011\n", imm_bin, rs1_bin, rd_bin);
@@ -88,6 +89,7 @@ int main(int argc, char *argv[]){
             binario(rd, rd_bin);
             binario(rs1, rs1_bin);
             binario_imediato(imm, imm_bin);
+            // RISC-V LB: imm[11:0] | rs1 | funct3 | rd | opcode
             if(escolha_de_saida==1){
                 //saida de arquivo
                 fprintf(saida, "%s%s000%s0000011\n", imm_bin, rs1_bin, rd_bin);
@@ -97,14 +99,77 @@ int main(int argc, char *argv[]){
             }
 
         }
-        else if(strcmp(comando, "sb")==0){
-            
+        else if(strcmp(comando, "sb")==0){ //meu
+            unsigned int rs2;
+            char rs2_bin[6];
+            unsigned int rs1;
+            char rs1_bin[6];
+            signed int imm;
+            char imm_bin[13];
+            sscanf(linha, "%*s %d %d %d", &rs2, &imm, &rs1);
+            binario(rs2, rs2_bin);
+            binario(rs1, rs1_bin);
+            binario_imediato(imm, imm_bin);
+            char imm_5_11_bin [8];
+            char imm_0_4_bin [6];
+            for (int i = 0; i < 7; i++){
+                imm_5_11_bin[i] = imm_bin[i];
+            }
+            imm_5_11_bin[7] = '\0';
+            for (int i = 0; i < 5; i++){
+                imm_0_4_bin[i] = imm_bin[i + 7]; 
+            }
+            imm_0_4_bin[5] = '\0';
+            // RISC-V SB: imm[11:5] | rs2 | rs1 | funct3 | imm[4:0] | opcode
+            if(escolha_de_saida==1){
+                //saida de arquivo
+                fprintf(saida, "%s%s%s000%s0100011", imm_5_11_bin, rs2_bin, rs1_bin, imm_0_4_bin);
+            }
+            else{
+                printf("%s%s%s000%s0100011", imm_5_11_bin, rs2_bin, rs1_bin, imm_0_4_bin);
+            }
+
         }
-        else if(strcmp(comando, "and")==0){
-            
+        else if(strcmp(comando, "and")==0){ //meu
+            unsigned int rd;
+            char rd_bin [6];
+            unsigned int rs1;
+            char rs1_bin[6];
+            unsigned int rs2;
+            char rs2_bin[6];
+            sscanf(linha, "%*s  %d  %d  %d", &rd, &rs1, &rs2);
+            binario(rd, rd_bin);
+            binario(rs1, rs1_bin);
+            binario(rs2, rs2_bin);
+            // RISC-V AND: funct7 | rs2 | rs1 | funct3 | rd | opcode
+            if(escolha_de_saida==1){
+                //saida de arquivo
+                fprintf(saida, "0000000%s%s111%s0110011\n", rs2_bin, rs1_bin, rd_bin);
+            }
+            else{
+                printf("0000000%s%s111%s0110011\n", rs2_bin, rs1_bin, rd_bin);
+            }
+
         }
-        else if(strcmp(comando, "srl")==0){
-            
+        else if(strcmp(comando, "srl")==0){ //meu
+                        unsigned int rd;
+            char rd_bin [6];
+            unsigned int rs1;
+            char rs1_bin[6];
+            unsigned int rs2;
+            char rs2_bin[6];
+            sscanf(linha, "%*s  %d  %d  %d", &rd, &rs1, &rs2);
+            binario(rd, rd_bin);
+            binario(rs1, rs1_bin);
+            binario(rs2, rs2_bin);
+            // RISC-V SRL: funct7 | rs2 | rs1 | funct3 | rd | opcode
+            if(escolha_de_saida==1){
+                //saida de arquivo
+                fprintf(saida, "0000000%s%s101%s0110011\n", rs2_bin, rs1_bin, rd_bin);
+            }
+            else{
+                printf("0000000%s%s101%s0110011\n", rs2_bin, rs1_bin, rd_bin);
+            }
         }
         
 
