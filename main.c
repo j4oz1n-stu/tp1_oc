@@ -1,29 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-void binario(int valor, char binario[]){
-    for(int i = 0; i < 5; i++) {
-        binario[i] = '0';
+void binario(int valor, char binario[]) {
+    for (int i = 4; i >= 0; i--) {
+        binario[4 - i] = ((valor >> i) & 1) + '0';
     }
     binario[5] = '\0';
-    int i=1;
-    while(valor>0){
-        binario[5-i] = valor%2 + '0';
-        valor= valor/2;
-        i++;
-    }
 }
-void binario_imediato(int valor, char binario[]){
-    for(int i =0;i<12;i++){
-        binario[i] = '0';
+void binario_imediato(int valor, char binario[]) {
+    for (int i = 11; i >= 0; i--) {
+        binario[11 - i] = ((valor >> i) & 1) + '0';
     }
     binario[12] = '\0';
-    int i=1;
-    while(valor>0){
-        binario[12-i] = valor%2 + '0';
-        valor= valor/2;
-        i++;
-    }
 }
 
 int main(int argc, char *argv[]){
@@ -50,35 +38,64 @@ int main(int argc, char *argv[]){
         char comando [3];
         sscanf(linha, "%s", comando);
         if (strcmp(comando, "sub")==0){
-            int rd;
+            unsigned int rd;
             char rd_bin [6];
-            int reg1;
+            unsigned int reg1;
             char reg1_bin[6];
-            int reg2;
+            unsigned int reg2;
             char reg2_bin[6];
             sscanf(linha, "%*s  %d  %d  %d", &rd, &reg1, &reg2);
             binario(rd, rd_bin);
             binario(reg1, reg1_bin);
             binario(reg2, reg2_bin);
             // RISC-V SUB: funct7 | rs2 | rs1 | funct3 | rd | opcode
-            printf("0100000%s%s000%s0110011", reg2_bin, reg1_bin, rd_bin);
             if(escolha_de_saida==1){
                 //saida de arquivo
-                fprintf(saida, "0100000%s%s000%s0110011", reg2_bin, reg1_bin, rd_bin);
+                fprintf(saida, "0100000%s%s000%s0110011\n", reg2_bin, reg1_bin, rd_bin);
             }
             else{
-                printf("0100000%s%s000%s0110011", reg2_bin, reg1_bin, rd_bin);
+                printf("0100000%s%s000%s0110011\n", reg2_bin, reg1_bin, rd_bin);
             }
 
         }
         else if(strcmp(comando, "ori")==0){
-            
+            unsigned int rd,rs1;
+            signed int imm;
+            char rd_bin[6];char rs1_bin[6];char imm_bin[13];
+            sscanf(linha,"%*s %d %d %d",&rd,&rs1,&imm);
+            binario(rd, rd_bin);
+            binario(rs1, rs1_bin);
+            binario_imediato(imm, imm_bin);
+            if(escolha_de_saida==1){
+                //saida de arquivo
+                fprintf(saida, "%s%s110%s0010011\n", imm_bin, rs1_bin, rd_bin);
+            }
+            else{
+                printf("%s%s110%s0010011\n", imm_bin, rs1_bin, rd_bin);
+            }
         }
         else if(strcmp(comando, "beq")==0){
             
         }
         else if(strcmp(comando, "lb")==0){
-            
+            unsigned int rd;
+            char rd_bin[6];
+            unsigned int rs1;
+            char rs1_bin[6];
+            signed int imm;
+            char imm_bin[13];
+            sscanf(linha, "%*s %d %d %d", &rd, &imm, &rs1);
+            binario(rd, rd_bin);
+            binario(rs1, rs1_bin);
+            binario_imediato(imm, imm_bin);
+            if(escolha_de_saida==1){
+                //saida de arquivo
+                fprintf(saida, "%s%s000%s0000011\n", imm_bin, rs1_bin, rd_bin);
+            }
+            else{
+                printf("%s%s000%s0000011\n", imm_bin, rs1_bin, rd_bin);
+            }
+
         }
         else if(strcmp(comando, "sb")==0){
             
