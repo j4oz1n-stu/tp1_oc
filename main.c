@@ -76,7 +76,20 @@ int main(int argc, char *argv[]){
             }
         }
         else if(strcmp(comando, "beq")==0){
-            
+            unsigned int rs1,rs2;
+            int rotulo_endereco;
+            int offset;
+            char rs1_bin[6];char rs2_bin[6];char offset_bin[13];
+            sscanf(linha,"%*s %d %d",&rs1,&rs2);
+            binario(rs1,rs1_bin);binario(rs2,rs2_bin);
+            if(escolha_de_saida==1){
+                //saida de arquivo
+                fprintf(saida, "0000000%s%s000100001100011\n", rs1_bin, rs2_bin);
+            }
+            else{
+                printf("0000000%s%s000100001100011\n", rs1_bin, rs2_bin);
+            }
+
         }
         else if(strcmp(comando, "lb")==0){
             unsigned int rd;
