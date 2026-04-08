@@ -3,7 +3,7 @@
 
 Este projeto é um **Montador (Assembler)** desenvolvido em linguagem C. Ele traduz instruções da arquitetura **RISC-V** para linguagem de máquina em formato binário de 32 bits.
 
-O programa processa um arquivo de entrada `.asm`, realiza o fatiamento de imediatos para diferentes tipos de instruções (R, I, S, B) e gera a saída em binário.
+O programa processa um arquivo de entrada `.asm`, realiza o fatiamento de imediatos para diferentes tipos de instruções (R, I, S, B) e gera uma saída em binário, a qual o local de saída é por escolha do usuario.
 
 ---
 
@@ -45,7 +45,7 @@ O montador suporta as seguintes instruções e formatos:
     ```bash
     make run
     ```
-    *Nota: O programa solicitará no terminal se você deseja a saída no arquivo (1) ou no próprio terminal (2).*
+    Nota: O programa solicitará no terminal se você deseja a saída no arquivo (1) ou no próprio terminal (2).
 
 3.  **Limpar arquivos temporários:**
     ```bash
