@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+typedef struct rotulo
+{
+    char nome[50];
+    int endereco;
+}rotulo;
 void binario(int valor, char binario[]) {
     for (int i = 4; i >= 0; i--) {
         binario[4 - i] = ((valor >> i) & 1) + '0';
@@ -28,7 +33,35 @@ void output_w(char comando[], int output_type, FILE* saida){
         printf("%s\n", comando);
     }
 }
-void assembler (char linha[], int output_type, FILE* saida){
+void labels_finder(char linha[],rotulo rotulos[],int *qntsRotulos,int* pc){
+    char primeira[50];
+        sscanf(linha,"%s",primeira);
+        int len = strlen(primeira);
+        if(primeira[len-1] == ':'){
+            primeira[len - 1] = '\0';
+            strcpy(rotulos[*qntsRotulos].nome,primeira);
+            rotulos[*qntsRotulos].endereco = *pc;
+            (*qntsRotulos)++;
+        }
+}
+void assembler (char linha[], int output_type, FILE* saida,rotulo rotulos[],int *qntsRotulos,int* pc){
+    //com essa parte
+    char primeira[50];
+    sscanf(linha,"%s",primeira);
+    int len = strlen(primeira);
+    if(primeira[len-1] == ':'){
+    char *resto = strchr(linha, ':');
+    if(resto != NULL){
+                resto++;
+                if (*resto == '\0' || *resto == '\n') {
+                    int x =0;
+                }
+                strcpy(linha, resto);
+            
+        
+        }
+
+    }
     cleaner(linha);
     char comando [3];
     char output [33];
@@ -45,7 +78,7 @@ void assembler (char linha[], int output_type, FILE* saida){
         binario(rs1, rs1_bin);
         binario(rs2, rs2_bin);
         // RISC-V SUB: funct7 | rs2 | rs1 | funct3 | rd | opcode
-        snprintf(output, "0100000%s%s000%s0110011", rs2_bin, rs1_bin, rd_bin);
+        sprintf(output, "0100000%s%s000%s0110011", rs2_bin, rs1_bin, rd_bin);
         output_w(output, output_type, saida);
 
     }
@@ -58,20 +91,37 @@ void assembler (char linha[], int output_type, FILE* saida){
         binario(rs1, rs1_bin);
         binario_imediato(imm, imm_bin);
         // RISC-V ORI: imm[11:0] | rs1 | funct3 | rd | opcode
-        snprintf(output, "%s%s110%s0010011", imm_bin, rs1_bin, rd_bin);
+        sprintf(output, "%s%s110%s0010011", imm_bin, rs1_bin, rd_bin);
         output_w(output, output_type, saida);
     }
     else if(strcmp(comando, "beq")==0){
         unsigned int rs1,rs2;
-        int rotulo_endereco;
-        int offset;
+        char rotulo_nome[50];
+        int rotulo_endereco = -1;
         char rs1_bin[6];char rs2_bin[6];char offset_bin[13];
-        sscanf(linha,"%*s %d %d",&rs1,&rs2);
+        sscanf(linha,"%*s %d %d %s",&rs1,&rs2,rotulo_nome);
+        for(int i=0;i<*qntsRotulos;i++){
+                int resultado = strcmp(rotulos[i].nome,rotulo_nome);
+                if(resultado==0){rotulo_endereco = rotulos[i].endereco;break;}
+        }
+        int offset;
+        //calcular offset
+        offset = (rotulo_endereco-(*pc));
+
+
+
         binario(rs1,rs1_bin);
         binario(rs2,rs2_bin);
-        snprintf(output, "0000000%s%s000000001100011", rs2_bin, rs1_bin);
+        offset = offset >> 1;
+        binario_imediato(offset,offset_bin);
+        char bit12 = offset_bin[0];char bit11 = offset_bin[1];
+        char bits10_5[7];char bits4_1[5];
+        strncpy(bits10_5, &offset_bin[2], 6);
+        bits10_5[6] = '\0';
+        strncpy(bits4_1, &offset_bin[8], 4);
+        bits4_1[4] = '\0';
+        sprintf(output, "%c%s%s%s000%s%c1100011",bit12,bits10_5, rs2_bin, rs1_bin,bits4_1,bit11);
         output_w(output, output_type, saida);
-
     }
     else if(strcmp(comando, "lb")==0){
         unsigned int rd;
@@ -85,7 +135,7 @@ void assembler (char linha[], int output_type, FILE* saida){
         binario(rs1, rs1_bin);
         binario_imediato(imm, imm_bin);
         // RISC-V LB: imm[11:0] | rs1 | funct3 | rd | opcode
-        snprintf(output, "%s%s000%s0000011", imm_bin, rs1_bin, rd_bin);
+        sprintf(output, "%s%s000%s0000011", imm_bin, rs1_bin, rd_bin);
         output_w(output, output_type, saida);
 
     }
@@ -111,11 +161,11 @@ void assembler (char linha[], int output_type, FILE* saida){
         }
         imm_0_4_bin[5] = '\0';
         // RISC-V SB: imm[11:5] | rs2 | rs1 | funct3 | imm[4:0] | opcode
-        snprintf(output, "%s%s%s000%s0100011", imm_5_11_bin, rs2_bin, rs1_bin, imm_0_4_bin);
+        sprintf(output, "%s%s%s000%s0100011", imm_5_11_bin, rs2_bin, rs1_bin, imm_0_4_bin);
         output_w(output, output_type, saida);
 
     }
-    else if(strcmp(comando, "and")==0){ //meu
+    else if(strcmp(comando, "and")==0){
         unsigned int rd;
         char rd_bin [6];
         unsigned int rs1;
@@ -127,9 +177,8 @@ void assembler (char linha[], int output_type, FILE* saida){
         binario(rs1, rs1_bin);
         binario(rs2, rs2_bin);
         // RISC-V AND: funct7 | rs2 | rs1 | funct3 | rd | opcode
-        snprintf(output, "0000000%s%s111%s0110011", rs2_bin, rs1_bin, rd_bin);
+        sprintf(output, "0000000%s%s111%s0110011", rs2_bin, rs1_bin, rd_bin);
         output_w(output, output_type, saida);
-
     }
     else if(strcmp(comando, "srl")==0){ //meu
                     unsigned int rd;
@@ -143,9 +192,10 @@ void assembler (char linha[], int output_type, FILE* saida){
         binario(rs1, rs1_bin);
         binario(rs2, rs2_bin);
         // RISC-V SRL: funct7 | rs2 | rs1 | funct3 | rd | opcode
-        snprintf(output, "0000000%s%s101%s0110011", rs2_bin, rs1_bin, rd_bin);
+        sprintf(output, "0000000%s%s101%s0110011", rs2_bin, rs1_bin, rd_bin);
         output_w(output, output_type, saida);
     }
+    (*pc) += 4;
 }
 
 
@@ -165,9 +215,13 @@ int main(int argc, char *argv[]){
     printf("Escolha a forma que voce gostaria de receber a saida,\n");
     printf("Digite 1 para saida de arquivo ou 2 pra saida no terminal!\n");
     scanf("%d",&output_type);
-    
+    rotulo rotulos[100];
+    int qntsRotulos = 0;
+    int pc = 0;
     while(fgets(linha, 70, entrada)!=NULL){
-        assembler(linha, output_type, saida);
+        labels_finder(linha,rotulos,&qntsRotulos,&pc);
+        assembler(linha, output_type, saida,rotulos,&qntsRotulos,&pc);
+
     }
     fclose(entrada);
     fclose(saida);
