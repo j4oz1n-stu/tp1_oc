@@ -37,7 +37,9 @@ O montador suporta as seguintes instruções e formatos:
 O projeto foi desenvolvido seguindo princípios de modularização para garantir clareza e facilidade de manutenção. As principais responsabilidades foram divididas nas seguintes funções:
 
 * **`cleaner` (Tratamento de Dados):** Atua no pré-processamento da linha lida do arquivo `.asm`. Sua função é limpar a string, removendo caracteres como `x`, `,`, `(` e `)`, padronizando a entrada para que os dados sejam extraídos corretamente.
-* **Busca de Labels (Resolução de Endereços):** Função dedicada a percorrer o arquivo para identificar e mapear os *labels* (etiquetas). Essencial para o cálculo de saltos na instrução `beq`, permitindo o uso de desvios condicionais no código assembly.
+* **`binario` (Conversão de Registradores):** Converte os índices dos registradores para o formato binário de **5 bits**.
+* **`binario_imediato` (Conversão de Constantes):** Converte valores imediatos para o formato binário de **12 bits**, essencial para instruções Tipo-I, S e B.
+* **`labels_finder` (Resolução de Endereços):** Função dedicada a percorrer o arquivo para identificar e mapear os *labels* (etiquetas). Essencial para o cálculo de saltos na instrução `beq`, permitindo o uso de desvios condicionais no código assembly.
 * **`assembler` (Análise e Tradução):** O núcleo do programa. Esta função identifica qual instrução está sendo lida, aplica a lógica de montagem específica para cada tipo (R, I, S, B), realiza o fatiamento de imediatos e organiza os campos de bits.
 * **`output_w` (Persistência e Saída):** Responsável por abstrair a escrita dos resultados. Dependendo da escolha do usuário, esta função encaminha a instrução traduzida para o terminal ou para o arquivo de destino.
 
