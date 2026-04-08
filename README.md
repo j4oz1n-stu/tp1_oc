@@ -11,7 +11,7 @@ O programa processa um arquivo de entrada `.asm`, realiza o fatiamento de imedia
 
 O montador suporta as seguintes instruções e formatos:
 
-| Formato | Instrução | Opcode | Funct3 | Descrição |
+| Formato | Instrução | Descrição |
 | :--- | :--- | :--- | :--- | :--- |
 | **Tipo-R** | `sub` | Subtração de registradores |
 | **Tipo-R** | `and` | Operação lógica AND |
@@ -23,7 +23,7 @@ O montador suporta as seguintes instruções e formatos:
 
 ---
 
-## 📂 Estrutura do Projeto
+## Estrutura do Projeto
 
 * `main.c`: Código-fonte principal com a lógica de tradução.
 * `Makefile`: Automação de compilação e execução.
@@ -32,7 +32,7 @@ O montador suporta as seguintes instruções e formatos:
 
 ---
 
-## 🚀 Como Executar
+## Como Executar
 
 ### Utilizando o Makefile 
 
