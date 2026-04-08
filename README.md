@@ -12,7 +12,7 @@ O programa processa um arquivo de entrada `.asm`, realiza o fatiamento de imedia
 O montador suporta as seguintes instruções e formatos:
 
 | Formato | Instrução | Descrição |
-| :--- | :--- | :--- | :--- | :--- |
+| :--- | :--- | :--- |
 | **Tipo-R** | `sub` | Subtração de registradores |
 | **Tipo-R** | `and` | Operação lógica AND |
 | **Tipo-R** | `srl` | Deslocamento lógico à direita |
