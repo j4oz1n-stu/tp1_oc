@@ -84,7 +84,7 @@ int main(int argc, char *argv[]){
             binario(rs1,rs1_bin);binario(rs2,rs2_bin);
             if(escolha_de_saida==1){
                 //saida de arquivo
-                fprintf(saida, "0000000%s%s000000001100011\n", rs2_bin, rs1_bin);
+                fprintf(saida, "0000000%s%s000000001100011\n", rs2_bin, rs1_bin);//ue
             }
             else{
                 printf("0000000%s%s000000001100011\n", rs2_bin, rs1_bin);
